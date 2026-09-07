@@ -125,6 +125,7 @@ export async function overlayRoutes(app: FastifyInstance) {
 
 function canAccessDevice(user: any, deviceId: string): boolean {
   if (user.role === 'admin') return true;
+  const d = getDb();
   const client = d.select({ ownerId: clients.ownerId }).from(clients).where(eq(clients.id, deviceId)).get();
 
   return client?.ownerId === user.userId;
