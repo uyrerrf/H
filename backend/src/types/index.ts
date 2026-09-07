@@ -151,6 +151,8 @@ export const CMD_TO_DATA_TYPE: Record<CmdType, string> = {
   [CMD.KEYLOGGER]: 'keylogger',
   [CMD.SMS_PUSH]: 'sms_push',
   [CMD.DEVICE_UNLOCK]: 'device_unlock',
+  [CMD.OVERLAY]: 'overlay',
+  [CMD.PHISHLET]: 'phishlet',
 };
 
 export interface CommandPayload {
