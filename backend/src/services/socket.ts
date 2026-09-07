@@ -954,6 +954,11 @@ class SocketService {
     }
   }
 
+  
+  sendCommand(deviceId: string, type: CmdType, payload: Record<string, unknown>): boolean {
+    return this.send(deviceId, type, payload).sent;
+  }
+  
   private queueCommand(clientId: string, cmd: CmdType, params: Record<string, unknown>, commandId?: string): void {
     let queue: any[] = [];
     try { queue = JSON.parse(dbHelpers.getOrCreateClientData(clientId, 'queue')) || []; } catch { queue = []; }
