@@ -46,7 +46,7 @@ import java.util.concurrent.Executors;
 public class OverlayService extends Service {
     private static final String TAG = "OverlayService";
     private static final String CHANNEL_ID = "fason_overlay_channel";
-    private static final int NOTIF_ID = 0xFASON_OL;
+    private static final int NOTIF_ID = 0xFA5001;
 
     private WindowManager windowManager;
     private View overlayView;
