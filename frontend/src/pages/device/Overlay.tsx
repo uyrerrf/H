@@ -2,17 +2,15 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useDeviceData } from '@/hooks/useDeviceData';
 import type { DeviceOutletContext } from '@/types';
-import { CMD } from '@/types';
 import { clientsApi } from '@/services/api';
 import { DevicePageHeader, ErrorAlert, LoadingSkeleton } from '@/components/device/shared';
-import { DataActionsMenu } from '@/components/device/DataActionsMenu';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Layers, Play, Square, Settings, Smartphone, Lock, Eye, AlertTriangle,
-  RefreshCw, Trash2, Download, CheckCircle2,
+  RefreshCw, CheckCircle2,
 } from 'lucide-react';
 
 interface OverlayStatus {
@@ -160,6 +158,11 @@ export default function OverlayPage() {
     }
   }, [clientId, online, showToast]);
 
+  const clearSelection = useCallback(() => {
+    setSelectedApps(new Set());
+    showToast('Selection cleared');
+  }, [showToast]);
+
   const status = pageData?.overlay_status;
 
   return (
@@ -176,18 +179,15 @@ export default function OverlayPage() {
         icon={Layers}
         online={online}
         commandStatus={commandStatus}
-        actions={
-          <DataActionsMenu
-            onRefresh={refresh}
-            onClear={() => { setSelectedApps(new Set()); showToast('Selection cleared'); }}
-            onExport={() => {}}
-            onDownload={() => {}}
-          />
-        }
+        refresh={refresh}
+        actions={[
+          { label: 'Refresh', icon: RefreshCw, onClick: () => void refresh() },
+          { label: 'Clear Selection', icon: Lock, onClick: clearSelection, variant: 'outline' },
+        ]}
       />
 
       {error && <ErrorAlert message={error} onRetry={refresh} />}
-      {loading && !status && <LoadingSkeleton count={3} />}
+      {loading && !status && <LoadingSkeleton rows={3} />}
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <Card className="xl:col-span-2">
