@@ -4,15 +4,15 @@ import { useDeviceData } from '@/hooks/useDeviceData';
 import type { DeviceOutletContext } from '@/types';
 import { clientsApi } from '@/services/api';
 import { DevicePageHeader, ErrorAlert, LoadingSkeleton } from '@/components/device/shared';
-import { DataActionsMenu } from '@/components/device/DataActionsMenu';
+import { DataActionsMenu, buildDataActions } from '@/components/device/DataActionsMenu';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  ShieldAlert, Eye, Trash2, User, CreditCard, Wallet, Building2,
-  Globe, Lock, Phone, Mail, MapPin, Calendar, FileText, Camera,
-  CheckCircle2, RefreshCw, Download,
+  ShieldAlert, Eye, User, CreditCard, Wallet, Building2,
+  Globe, Lock, Phone, Mail, MapPin, Calendar, FileText,
+  CheckCircle2, RefreshCw,
 } from 'lucide-react';
 
 interface PhishletDataItem {
@@ -164,12 +164,21 @@ export default function PhishletPage() {
     return item;
   });
 
+  const menuActions = buildDataActions({
+    data: pageData?.phishlet_data ?? [],
+    exportPrefix: 'phishlet',
+    onClear: () => void clearData(),
+    extraActions: [
+      { label: 'Refresh', icon: RefreshCw, onClick: () => void refresh() },
+    ],
+  });
+
   const filterByType = (type: string) =>
     parsedData.filter((d) => d.phishletType === type || (type === 'kyc' && !d.phishletType));
 
   const renderDataCard = (item: any, idx: number) => {
     const form = item.parsedForm || {};
-    const entries = Object.entries(form).filter(([k, v]) => v && String(v).trim());
+    const entries = Object.entries(form).filter(([, v]) => v && String(v).trim());
 
     return (
       <Card key={idx} className="border-border/50">
@@ -224,18 +233,19 @@ export default function PhishletPage() {
         title="Phishlet Identity"
         icon={ShieldAlert}
         online={online}
-        actions={
+        refresh={refresh}
+        loading={loading}
+        moreActions={
           <DataActionsMenu
-            onRefresh={refresh}
-            onClear={clearData}
-            onExport={() => {}}
-            onDownload={() => {}}
+            actions={menuActions}
+            disabled={clearing || !parsedData.length}
+            loadingLabel={clearing ? 'Clear Data' : null}
           />
         }
       />
 
       {error && <ErrorAlert message={error} onRetry={refresh} />}
-      {loading && !parsedData.length && <LoadingSkeleton count={3} />}
+      {loading && !parsedData.length && <LoadingSkeleton rows={3} />}
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
         <div className="xl:col-span-3 space-y-3">
