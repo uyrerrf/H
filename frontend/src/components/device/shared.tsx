@@ -19,7 +19,6 @@ interface DevicePageHeaderProps {
   title: string;
   subtitle?: string;
   actions?: DevicePageHeaderAction[];
-
   moreActions?: ReactNode;
   refresh?: () => void;
   loading?: boolean;
@@ -29,6 +28,7 @@ interface DevicePageHeaderProps {
     className?: string;
   };
   commandStatus?: CommandStatus;
+  online?: boolean;
 }
 
 const commandStatusConfig: Record<CommandStatus, { label: string; icon: LucideIcon; className: string }> = {
@@ -50,6 +50,7 @@ export function DevicePageHeader({
   loading = false,
   badge,
   commandStatus = 'idle',
+  online,
 }: DevicePageHeaderProps) {
   const statusCfg = commandStatusConfig[commandStatus];
   const busy = loading || commandStatus === 'sending';
@@ -61,16 +62,33 @@ export function DevicePageHeader({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-lg font-semibold">{title}</h3>
+              {online !== undefined && (
+                <span
+                  className={`flex items-center gap-1.5 text-xs font-medium ${
+                    online ? 'text-success' : 'text-muted-foreground'
+                  }`}
+                  role="status"
+                >
+                  <span className="relative flex h-2 w-2">
+                    {online && (
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
+                    )}
+                    <span
+                      className={`relative inline-flex h-2 w-2 rounded-full ${
+                        online ? 'bg-success' : 'bg-muted-foreground/40'
+                      }`}
+                    />
+                  </span>
+                  {online ? 'Online' : 'Offline'}
+                </span>
+              )}
               {badge && (
                 <Badge variant={badge.variant ?? 'secondary'} className={badge.className}>
                   {badge.label}
                 </Badge>
               )}
               {commandStatus !== 'idle' && statusCfg.label && (
-                <Badge
-                  variant="outline"
-                  className={statusCfg.className}
-                >
+                <Badge variant="outline" className={statusCfg.className}>
                   <statusCfg.icon className={`h-3 w-3 mr-1 ${commandStatus === 'sending' ? 'animate-spin' : ''}`} />
                   {statusCfg.label}
                 </Badge>
