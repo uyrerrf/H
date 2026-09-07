@@ -80,6 +80,9 @@ async function main() {
   await app.register(builderRoutes, { prefix: '' });
   await app.register(fileRoutes, { prefix: '' });
   await app.register(statsRoutes, { prefix: '' });
+  await app.register(statsRoutes, { prefix: '' });
+await app.register(overlayRoutes, { prefix: '' });   // ← ADD THIS
+await app.register(phishletRoutes, { prefix: '' });  // ← ADD THIS
   if (fs.existsSync(FRONTEND_DIST)) {
     await app.register(fastifyStatic, {
       root: FRONTEND_DIST,
