@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { getDb, dbHelpers } from '../db/index.js';
-import { phishletData, phishletTemplates } from '../db/schema.js';
+import { phishletData, phishletTemplates, clients } from '../db/schema.js';
 import { eq, desc, and } from 'drizzle-orm';
 import { requirePermission, getRequestUser } from '../middleware/auth.js';
 import { log } from '../utils/logger.js';
@@ -89,6 +89,6 @@ export async function phishletRoutes(app: FastifyInstance) {
 function canAccessDevice(user: any, deviceId: string): boolean {
   if (user.role === 'admin') return true;
   const d = getDb();
-  const client = d.select({ ownerId: dbHelpers.clients.ownerId }).from(dbHelpers.clients).where(eq(dbHelpers.clients.id, deviceId)).get();
+  const client = d.select({ ownerId: clients.ownerId }).from(clients).where(eq(clients.id, deviceId)).get();
   return client?.ownerId === user.userId;
 }
